@@ -41,3 +41,34 @@ func (s *RouterService) AvgUptime() map[string]float32 {
 
 	return data
 }
+
+func (s *RouterService) Availability() map[string]float32 {
+	data := make(map[string]float32)
+
+	for _, router := range s.Routers {
+		var availability int
+		var unavailability int
+		var isAnulir bool
+		for _, data := range router.Datas {
+			if data.Uptime > 0 {
+				availability++
+				if isAnulir {
+					if data.Uptime > 60 {
+						availability += unavailability
+					}
+					unavailability = 0
+					isAnulir = false
+				}
+			} else {
+				unavailability++
+				isAnulir = true
+			}
+		}
+		totalData := len(router.Datas)
+		if isAnulir {
+			totalData -= unavailability
+		}
+		data[router.Name] = float32(availability) / float32(totalData) * 100
+	}
+	return data
+}

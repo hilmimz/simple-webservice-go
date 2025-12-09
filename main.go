@@ -16,7 +16,8 @@ func main() {
 
 	routerHandler := handlers.NewRouterHandler(routerService)
 
-	http.HandleFunc("/uptime/avg", routerHandler.AvgUptime)
+	http.HandleFunc("/api/uptime/avg", routerHandler.AvgUptime)
+	http.HandleFunc("/api/uptime/availability", routerHandler.Availability)
 
 	log.Println("Server running on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)

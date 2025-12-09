@@ -27,3 +27,11 @@ func (h *RouterHandler) AvgUptime(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(result)
 }
+
+func (h *RouterHandler) Availability(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	result := h.Service.Availability()
+
+	json.NewEncoder(w).Encode(result)
+}
