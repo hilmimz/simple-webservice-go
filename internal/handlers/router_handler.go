@@ -23,7 +23,11 @@ func NewRouterHandler(s *services.RouterService) *RouterHandler {
 func (h *RouterHandler) AvgUptime(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	result := h.Service.AvgUptime()
+	result, err := services.AvgUptime()
+	if err != nil {
+		http.Error(w, "failed to process data", http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(result)
 }
@@ -31,7 +35,11 @@ func (h *RouterHandler) AvgUptime(w http.ResponseWriter, r *http.Request) {
 func (h *RouterHandler) Availability(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	result := h.Service.Availability()
+	result, err := services.Availability()
+	if err != nil {
+		http.Error(w, "failed to process data", http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(result)
 }

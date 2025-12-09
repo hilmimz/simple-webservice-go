@@ -2,11 +2,11 @@ package helper
 
 import "os"
 
-func ReadFile(path string) []byte {
+func ReadFile(path string) ([]byte, error) {
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return data
+	return data, nil
 }

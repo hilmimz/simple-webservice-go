@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"os"
 	"simple-webservice/internal/helper"
 	"simple-webservice/internal/models"
 )
@@ -17,7 +18,7 @@ Namun ini best practice terutama jika ada service yang mengubah data asli
 ataupun struct dengan ukuran besar
 */
 func NewRouterService() (*RouterService, error) {
-	data := helper.ReadFile("data/routers-uptime.json")
+	data, _ := helper.ReadFile("data/routers-uptime.json")
 
 	var routers []models.Router
 	if err := json.Unmarshal(data, &routers); err != nil {
@@ -27,10 +28,28 @@ func NewRouterService() (*RouterService, error) {
 	return &RouterService{Routers: routers}, nil
 }
 
-func (s *RouterService) AvgUptime() map[string]float32 {
-	data := make(map[string]float32)
+func LoadRouters() ([]models.Router, error) {
+	data, err := os.ReadFile("data/routers-uptime.json")
+	if err != nil {
+		return nil, err
+	}
 
-	for _, router := range s.Routers {
+	var routers []models.Router
+	if err := json.Unmarshal(data, &routers); err != nil {
+		return nil, err
+	}
+
+	return routers, nil
+}
+
+func AvgUptime() (map[string]float32, error) {
+	data := make(map[string]float32)
+	routers, err := LoadRouters()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, router := range routers {
 		var total int
 		for _, data := range router.Datas {
 			total += data.Uptime
@@ -39,13 +58,17 @@ func (s *RouterService) AvgUptime() map[string]float32 {
 		data[router.Name] = avg
 	}
 
-	return data
+	return data, nil
 }
 
-func (s *RouterService) Availability() map[string]float32 {
+func Availability() (map[string]float32, error) {
 	data := make(map[string]float32)
+	routers, err := LoadRouters()
+	if err != nil {
+		return nil, err
+	}
 
-	for _, router := range s.Routers {
+	for _, router := range routers {
 		var availability int
 		var unavailability int
 		var isAnulir bool
@@ -70,5 +93,26 @@ func (s *RouterService) Availability() map[string]float32 {
 		}
 		data[router.Name] = float32(availability) / float32(totalData) * 100
 	}
-	return data
+	return data, nil
+}
+
+func ProcessUploadedJSON(uploadedJSON []byte) error {
+	existing, err := LoadRouters()
+	if err != nil {
+		return err
+	}
+
+	var uploaded []models.Router
+	if err := json.Unmarshal(uploadedJSON, &uploaded); err != nil {
+		return err
+	}
+
+	merged := append(existing, uploaded...)
+
+	out, err := json.MarshalIndent(merged, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile("data/routers-uptime.json", out, 0644)
 }
