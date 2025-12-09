@@ -10,6 +10,12 @@ type RouterService struct {
 	Routers []models.Router
 }
 
+/*
+Sebenarnya kita bisa saja menuliskan bukan sebagai variabel pointer pada kembalian fungsi
+Ini dilakukan karena router handler membutuhkan variabel pointer
+Namun ini best practice terutama jika ada service yang mengubah data asli
+ataupun struct dengan ukuran besar
+*/
 func NewRouterService() (*RouterService, error) {
 	data := helper.ReadFile("data/routers-uptime.json")
 

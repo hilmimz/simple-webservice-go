@@ -6,6 +6,12 @@ import (
 	"simple-webservice/internal/services"
 )
 
+/*
+Sebenarnya kita bisa saja menuliskan bukan sebagai variabel pointer pada struct
+Namun ini best practice terutama jika ada handler yang mengubah data asli
+ataupun struct dengan ukuran besar
+*/
+
 type RouterHandler struct {
 	Service *services.RouterService
 }

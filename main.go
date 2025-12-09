@@ -18,6 +18,6 @@ func main() {
 
 	http.HandleFunc("/uptime/avg", routerHandler.AvgUptime)
 
-	log.Println("Server running on http://localhost.com:8080")
+	log.Println("Server running on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
