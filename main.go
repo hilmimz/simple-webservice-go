@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"simple-webservice/internal/handlers"
 	"simple-webservice/internal/middlewares"
+	"simple-webservice/internal/repository"
+	"simple-webservice/internal/services"
 )
 
 func main() {
@@ -14,7 +16,17 @@ func main() {
 	// 	panic(err)
 	// }
 
-	routerHandler := handlers.RouterHandler{}
+	filePath := "data/routers-uptime.json"
+
+	//Buat Repo
+	repo := repository.NewJSONRouterRepository(filePath)
+	// Buat service
+	routerService := services.NewRouterService(repo)
+
+	// Buat handler
+	routerHandler := handlers.NewRouterHandler(routerService)
+
+	// routerHandler := handlers.RouterHandler{}
 
 	http.HandleFunc("/api/uptime/avg", middlewares.OnlyGET(routerHandler.AvgUptime))
 	http.HandleFunc("/api/uptime/availability", middlewares.OnlyGET(routerHandler.Availability))

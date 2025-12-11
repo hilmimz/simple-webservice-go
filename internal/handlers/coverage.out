@@ -1,0 +1,15 @@
+mode: set
+simple-webservice/internal/handlers/router_handler.go:19.65,21.2 1 1
+simple-webservice/internal/handlers/router_handler.go:23.75,27.16 3 1
+simple-webservice/internal/handlers/router_handler.go:27.16,30.3 2 1
+simple-webservice/internal/handlers/router_handler.go:32.2,32.35 1 1
+simple-webservice/internal/handlers/router_handler.go:35.78,39.16 3 1
+simple-webservice/internal/handlers/router_handler.go:39.16,42.3 2 1
+simple-webservice/internal/handlers/router_handler.go:44.2,44.35 1 1
+simple-webservice/internal/handlers/upload_handler.go:8.79,13.16 3 1
+simple-webservice/internal/handlers/upload_handler.go:13.16,16.3 2 1
+simple-webservice/internal/handlers/upload_handler.go:18.2,21.16 3 1
+simple-webservice/internal/handlers/upload_handler.go:21.16,24.3 2 0
+simple-webservice/internal/handlers/upload_handler.go:26.2,26.63 1 1
+simple-webservice/internal/handlers/upload_handler.go:26.63,29.3 2 1
+simple-webservice/internal/handlers/upload_handler.go:31.2,31.53 1 1

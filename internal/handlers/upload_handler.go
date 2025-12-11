@@ -3,7 +3,6 @@ package handlers
 import (
 	"io"
 	"net/http"
-	"simple-webservice/internal/services"
 )
 
 func (h *RouterHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -12,7 +11,7 @@ func (h *RouterHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("routerData")
 
 	if err != nil {
-		http.Error(w, "Error retrieving the file", http.StatusBadRequest)
+		http.Error(w, "error retrieving the file", http.StatusBadRequest)
 		return
 	}
 
@@ -24,14 +23,10 @@ func (h *RouterHandler) UploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := services.ProcessUploadedJSON(content); err != nil {
+	if err := h.Service.ProcessUploadedJSON(content); err != nil {
 		http.Error(w, "failed to process json", http.StatusInternalServerError)
 		return
 	}
 
 	w.Write([]byte("uploaded and merged successfully"))
-
-	// fmt.Fprintf(w, "Uploaded File: %s\n", handler.Filename)
-	// fmt.Fprintf(w, "File Size: %d\n", handler.Size)
-	// fmt.Fprintf(w, "MIME Header: %v\n", handler.Header)
 }

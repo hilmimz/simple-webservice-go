@@ -2,13 +2,13 @@ package services
 
 import (
 	"encoding/json"
-	"os"
-	"simple-webservice/internal/helper"
+	"math"
 	"simple-webservice/internal/models"
+	"simple-webservice/internal/repository"
 )
 
 type RouterService struct {
-	Routers []models.Router
+	Repo repository.RouterRepository
 }
 
 /*
@@ -17,34 +17,13 @@ Ini dilakukan karena router handler membutuhkan variabel pointer
 Namun ini best practice terutama jika ada service yang mengubah data asli
 ataupun struct dengan ukuran besar
 */
-func NewRouterService() (*RouterService, error) {
-	data, _ := helper.ReadFile("data/routers-uptime.json")
-
-	var routers []models.Router
-	if err := json.Unmarshal(data, &routers); err != nil {
-		return nil, err
-	}
-
-	return &RouterService{Routers: routers}, nil
+func NewRouterService(repo repository.RouterRepository) *RouterService {
+	return &RouterService{Repo: repo}
 }
 
-func LoadRouters() ([]models.Router, error) {
-	data, err := os.ReadFile("data/routers-uptime.json")
-	if err != nil {
-		return nil, err
-	}
-
-	var routers []models.Router
-	if err := json.Unmarshal(data, &routers); err != nil {
-		return nil, err
-	}
-
-	return routers, nil
-}
-
-func AvgUptime() (map[string]float32, error) {
+func (s *RouterService) AvgUptime() (map[string]float32, error) {
 	data := make(map[string]float32)
-	routers, err := LoadRouters()
+	routers, err := s.Repo.LoadRouters()
 	if err != nil {
 		return nil, err
 	}
@@ -61,9 +40,9 @@ func AvgUptime() (map[string]float32, error) {
 	return data, nil
 }
 
-func Availability() (map[string]float32, error) {
+func (s *RouterService) Availability() (map[string]float32, error) {
 	data := make(map[string]float32)
-	routers, err := LoadRouters()
+	routers, err := s.Repo.LoadRouters()
 	if err != nil {
 		return nil, err
 	}
@@ -88,16 +67,21 @@ func Availability() (map[string]float32, error) {
 			}
 		}
 		totalData := len(router.Datas)
-		if isAnulir {
-			totalData -= unavailability
+		if unavailability == totalData {
+			data[router.Name] = float32(0)
+		} else {
+			if isAnulir {
+				totalData -= unavailability
+			}
+			result := float32(availability) / float32(totalData) * 100
+			data[router.Name] = float32(math.Round(float64(result)))
 		}
-		data[router.Name] = float32(availability) / float32(totalData) * 100
 	}
 	return data, nil
 }
 
-func ProcessUploadedJSON(uploadedJSON []byte) error {
-	existing, err := LoadRouters()
+func (s *RouterService) ProcessUploadedJSON(uploadedJSON []byte) error {
+	existing, err := s.Repo.LoadRouters()
 	if err != nil {
 		return err
 	}
@@ -109,10 +93,5 @@ func ProcessUploadedJSON(uploadedJSON []byte) error {
 
 	merged := append(existing, uploaded...)
 
-	out, err := json.MarshalIndent(merged, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile("data/routers-uptime.json", out, 0644)
+	return s.Repo.SaveRouters(merged)
 }

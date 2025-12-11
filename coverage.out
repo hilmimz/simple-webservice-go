@@ -1,0 +1,10 @@
+mode: set
+simple-webservice/internal/repository/respository.go:18.65,20.2 1 1
+simple-webservice/internal/repository/respository.go:22.71,25.16 2 1
+simple-webservice/internal/repository/respository.go:25.16,27.3 1 1
+simple-webservice/internal/repository/respository.go:29.2,30.55 2 1
+simple-webservice/internal/repository/respository.go:30.55,32.3 1 1
+simple-webservice/internal/repository/respository.go:34.2,34.21 1 1
+simple-webservice/internal/repository/respository.go:37.75,40.16 2 1
+simple-webservice/internal/repository/respository.go:40.16,42.3 1 0
+simple-webservice/internal/repository/respository.go:44.2,44.45 1 1
